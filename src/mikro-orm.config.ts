@@ -4,8 +4,6 @@ import { Post } from "./entities/Post";
 import path from "path";
 require("dotenv").config(); //Env variables access
 
-console.log(process.env.DB_NAME);
-
 export default {
   migrations: {
     path: path.join(__dirname, "./migrations"),
