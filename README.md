@@ -2,7 +2,7 @@
 
 > Fullstack project based on tutorial by Ben Awad (https://www.youtube.com/watch?v=I6ypD7qv3Z8)
 
-Will include the follow technologies:
+Will include the following technologies:
 
 - React
 - TypeScript
