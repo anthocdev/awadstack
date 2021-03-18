@@ -5,6 +5,7 @@ import {
   Ctx,
   Field,
   InputType,
+  Int,
   Mutation,
   ObjectType,
   Query,
@@ -52,7 +53,7 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async register(
     @Arg("authinfo") authinfo: UsernamePasswordInput,
-    @Arg("avatarid") avatarId: number,
+    @Arg("avatarid", () => Int) avatarId: number,
     @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
     /*  Username length validation */

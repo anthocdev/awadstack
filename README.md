@@ -1,8 +1,8 @@
-# AWAD Stack
+# AWAD Stack - Back End
 
 > Fullstack project based on tutorial by Ben Awad (https://www.youtube.com/watch?v=I6ypD7qv3Z8)
 
-Will include the following technologies:
+**Will include the following technologies:**
 
 - React
 - TypeScript
@@ -16,4 +16,12 @@ Will include the following technologies:
 - TypeGraphQL
 - Chakra
 
-> Repurposed from original project for better learning curve.
+> Repurposed from original project for a better learning curve.
+
+**Differences/Additions:**
+
+- User Avatars (Server only for now)
+- Environment Variables using dotenv
+- Extending session module structure
+
+_Will expand as I progress_

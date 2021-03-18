@@ -12,7 +12,7 @@ import redis from "redis";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import { MyContext } from "./types";
-
+import cors from "cors";
 /* Custom session data */
 declare module "express-session" {
   interface Session {
@@ -29,6 +29,14 @@ const main = async () => {
   await orm.getMigrator().up();
   /* Server Set-Up */
   const app = express();
+
+  /* CORS */
+  app.use(
+    cors({
+      origin: process.env.CORS_ORIGIN,
+      credentials: true,
+    })
+  );
 
   /* Redis Client + Express Session */
   let RedisStore = connectRedis(session);
@@ -58,7 +66,10 @@ const main = async () => {
     context: ({ req, res }): MyContext => ({ em: orm.em, req, res }),
   });
 
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({
+    app,
+    cors: false,
+  });
 
   app.get("/", (req, res) => {
     res.send("Server UP");

@@ -16,7 +16,7 @@ export class User {
   @Property({ type: "date", onUpdate: () => new Date() })
   updatedAt = new Date();
 
-  @Field()
+  @Field(() => Int)
   @Property({ type: "number" })
   avatarId!: number;
 
