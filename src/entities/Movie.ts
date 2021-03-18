@@ -3,7 +3,7 @@ import { Field, Int, ObjectType } from "type-graphql";
 
 @ObjectType()
 @Entity()
-export class Post {
+export class Movie {
   @Field(() => Int)
   @PrimaryKey()
   id!: number;
@@ -19,4 +19,8 @@ export class Post {
   @Field()
   @Property({ type: "text" })
   title!: string;
+
+  @Field()
+  @Property({ type: "text" })
+  imageLink: string;
 }
