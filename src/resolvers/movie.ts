@@ -1,32 +1,27 @@
 import { Movie } from "../entities/Movie";
-import { MyContext } from "../types";
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Mutation, Query, Resolver } from "type-graphql";
 
 @Resolver()
 export class MovieResolver {
   /* Get all movies */
   @Query(() => [Movie])
-  movies(@Ctx() { em }: MyContext): Promise<Movie[]> {
-    return em.find(Movie, {});
+  movies(): Promise<Movie[]> {
+    return Movie.find();
   }
   /*Find movie by id */
   @Query(() => Movie, { nullable: true })
-  movie(
-    @Arg("id") id: number,
-    @Ctx() { em }: MyContext
-  ): Promise<Movie | null> {
-    return em.findOne(Movie, { id });
+  movie(@Arg("id") id: number): Promise<Movie | undefined> {
+    return Movie.findOne(id);
   }
   /* Create Movie Listing */
   @Mutation(() => Movie)
   async createMovie(
     @Arg("title") title: string,
     @Arg("imageLink") imageLink: string,
-    @Ctx() { em }: MyContext
+    @Arg("imdbId") imdbId: string
   ): Promise<Movie> {
-    const movie = em.create(Movie, { title, imageLink });
-    await em.persistAndFlush(movie);
-    return movie;
+    //2 SQL queries
+    return Movie.create({ title, imageLink, imdbId }).save();
   }
 
   /* Update Movie Listing */
@@ -35,11 +30,15 @@ export class MovieResolver {
     @Arg("id") id: number,
     @Arg("title", () => String, { nullable: true }) title: string,
     @Arg("imageLink", () => String, { nullable: true }) imageLink: string,
-    @Ctx() { em }: MyContext
+    @Arg("imdbId", () => String, { nullable: true }) imdbId: string
   ): Promise<Movie | null> {
-    const movie = await em.findOne(Movie, { id });
+    const movie = await Movie.findOne(id);
     if (!movie) {
       return null;
+    }
+
+    if (typeof imdbId !== "undefined") {
+      movie.imdbId = imdbId;
     }
 
     if (typeof imageLink !== "undefined") {
@@ -48,8 +47,7 @@ export class MovieResolver {
     }
 
     if (typeof title !== "undefined") {
-      movie.title = title;
-      await em.persistAndFlush(movie);
+      Movie.update({ id }, { title, imageLink, imdbId });
     }
 
     return movie;
@@ -57,12 +55,9 @@ export class MovieResolver {
 
   /* Delete Movie */
   @Mutation(() => Boolean)
-  async deleteMovie(
-    @Arg("id") id: number,
-    @Ctx() { em }: MyContext
-  ): Promise<boolean> {
+  async deleteMovie(@Arg("id") id: number): Promise<boolean> {
     try {
-      await em.nativeDelete(Movie, { id });
+      await Movie.delete(id);
     } catch {
       return false;
     }

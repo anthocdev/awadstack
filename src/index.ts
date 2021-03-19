@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { MikroORM } from "@mikro-orm/core";
 import { COOKIE_NAME, __prod__ } from "./constants";
-import microConf from "./mikro-orm.config";
+import ormConfig from "./orm.config";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
@@ -13,6 +13,7 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import { MyContext } from "./types";
 import cors from "cors";
+import { createConnection } from "typeorm";
 /* Custom session data */
 declare module "express-session" {
   interface Session {
@@ -23,10 +24,11 @@ declare module "express-session" {
 require("dotenv").config(); //Env variables access
 
 const main = async () => {
+  const conn = await createConnection(ormConfig);
   /*Establish DB connection */
-  const orm = await MikroORM.init(microConf);
+
   /* Run Migrations */
-  await orm.getMigrator().up();
+
   /* Server Set-Up */
   const app = express();
 
@@ -63,7 +65,7 @@ const main = async () => {
       resolvers: [HelloResolver, MovieResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }): MyContext => ({ em: orm.em, req, res, redis }),
+    context: ({ req, res }): MyContext => ({ req, res, redis }),
   });
 
   apolloServer.applyMiddleware({

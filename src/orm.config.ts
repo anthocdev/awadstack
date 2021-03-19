@@ -6,14 +6,11 @@ import { User } from "./entities/User";
 require("dotenv").config(); //Env variables access
 
 export default {
-  migrations: {
-    path: path.join(__dirname, "./migrations"),
-    pattern: /^[\w-]+\d+\.[tj]s$/,
-  },
-  entities: [Movie, User],
-  dbName: process.env.DB_NAME,
-  type: "postgresql",
-  debug: !__prod__,
-  user: process.env.DB_USER,
+  type: "postgres",
+  database: process.env.DB_NAME,
+  username: process.env.DB_USER,
   password: process.env.DB_PASS,
-} as Parameters<typeof MikroORM.init>[0];
+  logging: true,
+  synchronize: true,
+  entities: [User, Movie],
+} as any;
