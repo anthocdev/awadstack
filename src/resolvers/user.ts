@@ -86,6 +86,7 @@ export class UserResolver {
     );
     //User auto logged in after change
     req.session.userId = user.id;
+    req.session.accessLevel = user.accessLevel;
     redis.del(FORGOT_PASSWORD_PREFIX + token);
     return { user };
   }
@@ -170,6 +171,7 @@ export class UserResolver {
     }
 
     req.session.userId = user.id;
+    req.session.accessLevel = user.accessLevel;
     return { user };
   }
 
@@ -211,6 +213,7 @@ export class UserResolver {
     }
 
     req.session.userId = user.id;
+    req.session.accessLevel = user.accessLevel;
     /* No errors, returning user object */
     return { user };
   }

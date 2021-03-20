@@ -14,10 +14,12 @@ import connectRedis from "connect-redis";
 import { MyContext } from "./types";
 import cors from "cors";
 import { createConnection } from "typeorm";
+import { CommentResolver } from "./resolvers/comment";
 /* Custom session data */
 declare module "express-session" {
   interface Session {
     userId: number;
+    accessLevel: number;
   }
 }
 
@@ -62,7 +64,7 @@ const main = async () => {
   /* Apollo Server */
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, MovieResolver, UserResolver],
+      resolvers: [HelloResolver, MovieResolver, UserResolver, CommentResolver],
       validate: false,
     }),
     context: ({ req, res }): MyContext => ({ req, res, redis }),

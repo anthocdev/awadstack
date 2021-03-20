@@ -3,6 +3,7 @@ import { __prod__ } from "./constants";
 import { Movie } from "./entities/Movie";
 import path from "path";
 import { User } from "./entities/User";
+import { UserComment } from "./entities/Comment";
 require("dotenv").config(); //Env variables access
 
 export default {
@@ -12,5 +13,5 @@ export default {
   password: process.env.DB_PASS,
   logging: true,
   synchronize: true,
-  entities: [User, Movie],
+  entities: [User, Movie, UserComment],
 } as any;

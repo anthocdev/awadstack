@@ -1,5 +1,6 @@
 import { Movie } from "../entities/Movie";
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
+import { isAdmin } from "../middleware/isAdmin";
 
 @Resolver()
 export class MovieResolver {
@@ -15,6 +16,7 @@ export class MovieResolver {
   }
   /* Create Movie Listing */
   @Mutation(() => Movie)
+  @UseMiddleware(isAdmin)
   async createMovie(
     @Arg("title") title: string,
     @Arg("imageLink") imageLink: string,
@@ -26,6 +28,7 @@ export class MovieResolver {
 
   /* Update Movie Listing */
   @Mutation(() => Movie, { nullable: true })
+  @UseMiddleware(isAdmin)
   async updateMovie(
     @Arg("id") id: number,
     @Arg("title", () => String, { nullable: true }) title: string,
@@ -55,6 +58,7 @@ export class MovieResolver {
 
   /* Delete Movie */
   @Mutation(() => Boolean)
+  @UseMiddleware(isAdmin)
   async deleteMovie(@Arg("id") id: number): Promise<boolean> {
     try {
       await Movie.delete(id);

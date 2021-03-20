@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Movie } from "./Movie";
 import { User } from "./User";
 
 @ObjectType()
@@ -37,6 +38,13 @@ export class UserComment extends BaseEntity {
   @Column()
   creatorId: number;
 
+  @Field()
+  @Column()
+  movieId: number;
+
   @ManyToOne(() => User, (user) => user.comments)
   creator: User;
+
+  @ManyToOne(() => Movie, (movie) => movie.comments)
+  movie: Movie;
 }

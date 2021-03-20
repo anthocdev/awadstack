@@ -18,13 +18,15 @@
 - TypeGraphQL
 - Chakra
 
-> Repurposed from original project for a better learning curve.
-
 **Differences/Additions:**
 
+> Repurposed from original project for a better learning curve.
+
 - User Avatars (Server only for now)
+- User Access Levels
 - Environment Variables using dotenv
 - Extending session module structure
-- Movies instead of posts (w/ image links)
+- Movies listing (w/ image links & imdb Id's)
+- Comments linked with Users & Movies
 
 _Will expand as I progress_
