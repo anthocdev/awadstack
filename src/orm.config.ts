@@ -1,9 +1,9 @@
-import { MikroORM } from "@mikro-orm/core";
 import { __prod__ } from "./constants";
 import { Movie } from "./entities/Movie";
 import path from "path";
 import { User } from "./entities/User";
 import { UserComment } from "./entities/Comment";
+import { ConnectionOptions } from "typeorm";
 require("dotenv").config(); //Env variables access
 
 export default {
@@ -14,4 +14,5 @@ export default {
   logging: true,
   synchronize: true,
   entities: [User, Movie, UserComment],
-} as any;
+  migrations: [path.join(__dirname, "./migrations/*")],
+} as ConnectionOptions;

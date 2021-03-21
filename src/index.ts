@@ -27,6 +27,8 @@ require("dotenv").config(); //Env variables access
 
 const main = async () => {
   const conn = await createConnection(ormConfig);
+
+  await conn.runMigrations();
   /*Establish DB connection */
 
   /* Run Migrations */
