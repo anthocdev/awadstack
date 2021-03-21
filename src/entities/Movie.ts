@@ -28,6 +28,18 @@ export class Movie extends BaseEntity {
   title!: string;
 
   @Field()
+  @Column()
+  year!: number;
+
+  @Field()
+  @Column()
+  genre!: string;
+
+  @Field()
+  @Column("decimal", { precision: 5, scale: 2 })
+  rating!: number;
+
+  @Field()
   @Column({ unique: true })
   imdbId!: string;
 
