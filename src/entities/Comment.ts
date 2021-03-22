@@ -36,14 +36,14 @@ export class UserComment extends BaseEntity {
 
   @Field()
   @Column()
-  creatorId: number;
+  userId: number;
 
   @Field()
   @Column()
   movieId: number;
 
   @ManyToOne(() => User, (user) => user.comments)
-  creator: User;
+  user: User;
 
   @ManyToOne(() => Movie, (movie) => movie.comments)
   movie: Movie;

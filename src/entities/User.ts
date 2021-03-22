@@ -5,6 +5,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -32,8 +33,11 @@ export class User extends BaseEntity {
   @Field()
   @Column({ unique: true })
   email!: string;
+  //
 
-  @OneToMany(() => UserComment, (comment) => comment.creator)
+  /* Can be empty (no comments)  */
+  @Field(() => [UserComment], { nullable: true })
+  @OneToMany(() => UserComment, (comment) => comment.user)
   comments: UserComment[];
 
   /* -1 = Banned / 0 = Regular User / 1 = Admin */

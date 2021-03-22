@@ -4,9 +4,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { UserComment } from "./Comment";
 
 @ObjectType()
 @Entity()
@@ -46,4 +48,8 @@ export class Movie extends BaseEntity {
   @Field()
   @Column()
   imageLink: string;
+
+  @Field(() => [UserComment], { nullable: true })
+  @OneToMany(() => UserComment, (comment) => comment.movie)
+  comments: UserComment[];
 }

@@ -47,10 +47,10 @@ export class MovieResolver {
       hasMore: movies.length === extraLimit,
     };
   }
-  /*Find movie by id */
+  /*Find movie by id, returns with list of comments */
   @Query(() => Movie, { nullable: true })
-  movie(@Arg("id") id: number): Promise<Movie | undefined> {
-    return Movie.findOne(id);
+  async movie(@Arg("id") id: number): Promise<Movie | undefined> {
+    return Movie.findOne(id, { relations: ["comments"] });
   }
   /* Create Movie Listing */
   @Mutation(() => Movie)

@@ -120,13 +120,21 @@ export class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
-  me(@Ctx() { req }: MyContext) {
+  async me(@Ctx() { req }: MyContext) {
     if (!req.session.userId) {
       return null;
     }
 
+    // const qb = getConnection()
+    //   .getRepository(User)
+    //   .createQueryBuilder("user")
+    //   .leftJoinAndSelect("user.comments", "comments")
+    //   .where(`id = ${req.session.userId}`);
+
+    // return await qb.getOne();
     return User.findOne(req.session.userId);
   }
+
   /* Account Registration */
   @Mutation(() => UserResponse)
   async register(
@@ -214,6 +222,8 @@ export class UserResolver {
 
     req.session.userId = user.id;
     req.session.accessLevel = user.accessLevel;
+
+    console.log(req.session);
     /* No errors, returning user object */
     return { user };
   }
