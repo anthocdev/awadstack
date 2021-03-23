@@ -49,8 +49,10 @@ export class MovieResolver {
   }
   /*Find movie by id, returns with list of comments */
   @Query(() => Movie, { nullable: true })
-  async movie(@Arg("id") id: number): Promise<Movie | undefined> {
-    return Movie.findOne(id, { relations: ["comments"] });
+  async movie(@Arg("id", () => Int) id: number): Promise<Movie | undefined> {
+    return Movie.findOne(id, {
+      relations: ["comments", "comments.user"],
+    });
   }
   /* Create Movie Listing */
   @Mutation(() => Movie)

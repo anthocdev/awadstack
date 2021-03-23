@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -32,7 +33,11 @@ export class UserComment extends BaseEntity {
 
   @Field()
   @Column({ type: "int", default: 0 })
-  points!: number;
+  likes!: number;
+
+  @Field()
+  @Column({ type: "int", default: 0 })
+  dislikes!: number;
 
   @Field()
   @Column()
@@ -43,6 +48,8 @@ export class UserComment extends BaseEntity {
   movieId: number;
 
   @ManyToOne(() => User, (user) => user.comments)
+  @Field()
+  @JoinColumn()
   user: User;
 
   @ManyToOne(() => Movie, (movie) => movie.comments)
