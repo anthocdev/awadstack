@@ -1,4 +1,3 @@
-import { OneToMany } from "@mikro-orm/core";
 import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
@@ -6,10 +5,12 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { UserComment } from "./Comment";
+import { UserRating } from "./UserRating";
 
 @ObjectType()
 @Entity()
@@ -35,11 +36,6 @@ export class User extends BaseEntity {
   email!: string;
   //
 
-  /* Can be empty (no comments)  */
-  @Field(() => [UserComment], { nullable: true })
-  @OneToMany(() => UserComment, (comment) => comment.user)
-  comments: UserComment[];
-
   /* -1 = Banned / 0 = Regular User / 1 = Admin */
   @Field(() => Int)
   @Column({ type: "smallint", default: 0 })
@@ -51,4 +47,14 @@ export class User extends BaseEntity {
 
   @Column()
   password!: string;
+
+  /* Can be empty (no comments)  */
+  @Field(() => [UserComment], { nullable: true })
+  @OneToMany(() => UserComment, (comment) => comment.user)
+  comments: UserComment[];
+
+  /* Likes/Dislikes from user */
+  @Field(() => [UserRating], { nullable: true })
+  @OneToMany(() => UserRating, (rating) => rating.voter)
+  ratings: UserRating[];
 }

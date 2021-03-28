@@ -37,9 +37,15 @@ export class CommentResolver {
   //   return UserComment.find();
   // }
 
-  /* Get all comments */
+  @Query(() => [UserComment])
+  async testComments(): Promise<UserComment[]> {
+    return await UserComment.find({ relations: ["user"] });
+  }
+
+  /* Get all comments for specific movie */
   @Query(() => PaginatedComments)
   async comments(
+    @Arg("movieId", () => Int) movieId: number,
     @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => String, { nullable: true }) cursor: string | null
   ): Promise<PaginatedComments> {
@@ -48,6 +54,17 @@ export class CommentResolver {
     const qb = getConnection()
       .getRepository(UserComment)
       .createQueryBuilder("comment")
+      .where(`comment.movieId = ${movieId}`)
+      .loadRelationCountAndMap("comment.likes", "comment.ratings", "rc", (qb) =>
+        qb.where("rc.rating = true")
+      )
+      .loadRelationCountAndMap(
+        "comment.dislikes",
+        "comment.ratings",
+        "rc",
+        (qb) => qb.where("rc.rating = false")
+      )
+      .leftJoinAndSelect("comment.user", "user")
       .orderBy("comment.createdAt", "DESC")
       .take(extraLimit);
 
@@ -57,6 +74,7 @@ export class CommentResolver {
 
     const comments = await qb.getMany();
 
+    console.log(comments);
     return {
       comments: comments.slice(0, realLimit),
       hasMore: comments.length === extraLimit,
@@ -73,7 +91,7 @@ export class CommentResolver {
   @UseMiddleware(isAuth)
   async createComment(
     @Arg("input") input: CommentInput,
-    @Arg("movieId") movieId: number,
+    @Arg("movieId", () => Int) movieId: number,
     @Ctx() { req }: MyContext
   ): Promise<UserComment> {
     return UserComment.create({

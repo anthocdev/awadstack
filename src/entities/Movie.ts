@@ -49,7 +49,7 @@ export class Movie extends BaseEntity {
   @Column()
   imageLink: string;
 
-  @Field(() => [UserComment], { nullable: true })
+  // @Field(() => [UserComment], { nullable: true })
   @OneToMany(() => UserComment, (comment) => comment.movie)
   comments: UserComment[];
 }

@@ -144,7 +144,7 @@ export class UserResolver {
     //   .where(`id = ${req.session.userId}`);
 
     // return await qb.getOne();
-    return User.findOne(req.session.userId);
+    return User.findOne(req.session.userId, { relations: ["comments"] });
   }
 
   /* Account Registration */
