@@ -87,17 +87,25 @@ export class CommentResolver {
     return UserComment.findOne(id);
   }
 
-  @Mutation(() => UserComment)
+  @Mutation(() => UserComment, { nullable: true })
   @UseMiddleware(isAuth)
   async createComment(
     @Arg("input") input: CommentInput,
     @Arg("movieId", () => Int) movieId: number,
     @Ctx() { req }: MyContext
-  ): Promise<UserComment> {
-    return UserComment.create({
+  ): Promise<UserComment | undefined> {
+    var newPostId;
+    await UserComment.create({
       ...input,
       userId: req.session.userId,
       movieId,
-    }).save();
+    })
+      .save()
+      .then((x) => (newPostId = x.id));
+
+    return UserComment.findOne({
+      where: { id: newPostId },
+      relations: ["user"],
+    });
   }
 }

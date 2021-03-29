@@ -33,10 +33,10 @@ export class UserComment extends BaseEntity {
   body!: string;
 
   /* Mapping to ratings True count */
-  @Field()
+  @Field({ defaultValue: 0 })
   likes: number;
   /* Mapping to ratings False count  */
-  @Field()
+  @Field({ defaultValue: 0 })
   dislikes: number;
 
   @Field()
