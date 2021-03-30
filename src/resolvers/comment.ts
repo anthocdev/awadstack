@@ -25,6 +25,8 @@ class CommentInput {
 class PaginatedComments {
   @Field(() => [UserComment])
   comments: UserComment[];
+  @Field(() => Int)
+  id: number;
   @Field()
   hasMore: boolean;
 }
@@ -69,7 +71,9 @@ export class CommentResolver {
       .take(extraLimit);
 
     if (cursor) {
-      qb.where('"createdAt" < :cursor', { cursor: new Date(parseInt(cursor)) });
+      qb.where("comment.createdAt < :cursor", {
+        cursor: new Date(parseInt(cursor)),
+      });
     }
 
     const comments = await qb.getMany();
@@ -78,6 +82,7 @@ export class CommentResolver {
     return {
       comments: comments.slice(0, realLimit),
       hasMore: comments.length === extraLimit,
+      id: movieId,
     };
   }
 
