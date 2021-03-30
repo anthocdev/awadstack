@@ -26,9 +26,9 @@ export class User extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Field(() => Int)
+  @Field()
   @Column()
-  avatarId!: number;
+  avatarSvg!: string;
 
   @Field()
   @Column({ unique: true })

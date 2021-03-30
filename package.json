@@ -27,6 +27,7 @@
     "typescript": "^4.2.3"
   },
   "dependencies": {
+    "@multiavatar/multiavatar": "^1.0.6",
     "apollo-server-express": "^2.21.1",
     "argon2": "^0.27.1",
     "connect-redis": "^5.1.0",

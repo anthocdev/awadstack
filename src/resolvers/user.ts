@@ -19,6 +19,7 @@ import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";
 import { v4 } from "uuid";
 import { getConnection } from "typeorm";
+const multiavatar = require("@multiavatar/multiavatar");
 
 @ObjectType()
 class FieldError {
@@ -151,7 +152,6 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async register(
     @Arg("authinfo") authinfo: UsernamePasswordInput,
-    @Arg("avatarid", () => Int) avatarId: number,
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
     const errors = validateRegister(authinfo);
@@ -171,7 +171,7 @@ export class UserResolver {
           username: authinfo.username,
           password: hashedPass,
           email: authinfo.email,
-          avatarId,
+          avatarSvg: multiavatar(authinfo.username),
         })
         .returning("*")
         .execute();
