@@ -31,6 +31,14 @@ class PaginatedComments {
   hasMore: boolean;
 }
 
+@ObjectType()
+class CommentResponse {
+  @Field(() => UserComment, { nullable: true })
+  updatedComment?: UserComment;
+  @Field(() => Boolean, { nullable: true })
+  error?: boolean;
+}
+
 @Resolver()
 export class CommentResolver {
   /* Returns all comments */
@@ -114,13 +122,13 @@ export class CommentResolver {
     });
   }
   /* Update Comment */
-  @Mutation(() => UserComment, { nullable: true })
+  @Mutation(() => CommentResponse)
   @UseMiddleware(isAuth)
   async updateComment(
     @Arg("commentId", () => Int) commentId: number,
     @Arg("input") input: CommentInput,
     @Ctx() { req }: MyContext
-  ): Promise<UserComment | undefined> {
+  ): Promise<CommentResponse> {
     /* Look for the comment that matches both id and user ID (ensure privilege to edit) */
     const comment = await UserComment.findOne({
       id: commentId,
@@ -128,7 +136,7 @@ export class CommentResolver {
     });
 
     if (!comment) {
-      return undefined;
+      return { error: true };
     }
 
     if (typeof input !== "undefined") {
@@ -155,7 +163,7 @@ export class CommentResolver {
       )
       .getOne();
 
-    return updatedComment;
+    return { updatedComment };
   }
 
   /* Delete Comment */
