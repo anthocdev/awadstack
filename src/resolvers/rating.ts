@@ -1,33 +1,10 @@
-import {
-  Arg,
-  Ctx,
-  Field,
-  InputType,
-  Int,
-  Mutation,
-  ObjectType,
-  Resolver,
-  UseMiddleware,
-} from "type-graphql";
+import { Arg, Ctx, Int, Mutation, Resolver, UseMiddleware } from "type-graphql";
 import { MyContext } from "../types";
 import { isAuth } from "../middleware/isAuth";
 import { UserRating } from "../entities/UserRating";
 import { getConnection } from "typeorm";
 import { UserComment } from "../entities/Comment";
-
-@InputType()
-class CommentInput {
-  @Field()
-  body: string;
-}
-
-@ObjectType()
-class RatingResponse {
-  @Field(() => UserComment, { nullable: true })
-  updatedComment?: UserComment;
-  @Field(() => Boolean, { nullable: true })
-  error?: boolean;
-}
+import { RatingResponse } from "./_objectTypes";
 
 @Resolver()
 export class RatingResolver {

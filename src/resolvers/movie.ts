@@ -1,24 +1,15 @@
 import { Movie } from "../entities/Movie";
 import {
   Arg,
-  Field,
   Int,
   Mutation,
-  ObjectType,
   Query,
   Resolver,
   UseMiddleware,
 } from "type-graphql";
 import { isAdmin } from "../middleware/isAdmin";
 import { getConnection } from "typeorm";
-
-@ObjectType()
-class PaginatedMovies {
-  @Field(() => [Movie])
-  movies: Movie[];
-  @Field()
-  hasMore: boolean;
-}
+import { PaginatedMovies } from "./_objectTypes";
 
 @Resolver()
 export class MovieResolver {

@@ -3,40 +3,21 @@ import { MyContext } from "../types";
 import {
   Arg,
   Ctx,
-  Field,
   FieldResolver,
-  Int,
   Mutation,
-  ObjectType,
   Query,
   Resolver,
   Root,
 } from "type-graphql";
 import argon2 from "argon2";
 import { COOKIE_NAME, FORGOT_PASSWORD_PREFIX } from "../constants";
-import { UsernamePasswordInput } from "./UsernamePasswordInput";
+import { UsernamePasswordInput } from "./_inputTypes";
 import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";
 import { v4 } from "uuid";
 import { getConnection } from "typeorm";
+import { UserResponse } from "./_objectTypes";
 const multiavatar = require("@multiavatar/multiavatar");
-
-@ObjectType()
-class FieldError {
-  @Field()
-  field: string;
-  @Field()
-  message: string;
-}
-
-@ObjectType()
-class UserResponse {
-  @Field(() => [FieldError], { nullable: true })
-  errors?: FieldError[];
-
-  @Field(() => User, { nullable: true })
-  user?: User;
-}
 
 @Resolver(User)
 export class UserResolver {

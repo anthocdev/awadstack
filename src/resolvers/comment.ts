@@ -2,11 +2,8 @@ import { UserComment } from "../entities/Comment";
 import {
   Arg,
   Ctx,
-  Field,
-  InputType,
   Int,
   Mutation,
-  ObjectType,
   Query,
   Resolver,
   UseMiddleware,
@@ -14,44 +11,11 @@ import {
 import { MyContext } from "../types";
 import { isAuth } from "../middleware/isAuth";
 import { getConnection } from "typeorm";
-
-@InputType()
-class CommentInput {
-  @Field()
-  body: string;
-}
-
-@ObjectType()
-class PaginatedComments {
-  @Field(() => [UserComment])
-  comments: UserComment[];
-  @Field(() => Int)
-  id: number;
-  @Field()
-  hasMore: boolean;
-}
-
-@ObjectType()
-class CommentResponse {
-  @Field(() => UserComment, { nullable: true })
-  updatedComment?: UserComment;
-  @Field(() => Boolean, { nullable: true })
-  error?: boolean;
-}
+import { PaginatedComments, CommentResponse } from "./_objectTypes";
+import { CommentInput } from "./_inputTypes";
 
 @Resolver()
 export class CommentResolver {
-  /* Returns all comments */
-  // @Query(() => [UserComment])
-  // async comments(): Promise<UserComment[]> {
-  //   return UserComment.find();
-  // }
-
-  @Query(() => [UserComment])
-  async testComments(): Promise<UserComment[]> {
-    return await UserComment.find({ relations: ["user"] });
-  }
-
   /* Get all comments for specific movie */
   @Query(() => PaginatedComments)
   async comments(
@@ -103,7 +67,7 @@ export class CommentResolver {
   @Mutation(() => UserComment, { nullable: true })
   @UseMiddleware(isAuth)
   async createComment(
-    @Arg("input") input: CommentInput,
+    @Arg("input", () => CommentInput) input: CommentInput,
     @Arg("movieId", () => Int) movieId: number,
     @Ctx() { req }: MyContext
   ): Promise<UserComment | undefined> {
@@ -126,7 +90,7 @@ export class CommentResolver {
   @UseMiddleware(isAuth)
   async updateComment(
     @Arg("commentId", () => Int) commentId: number,
-    @Arg("input") input: CommentInput,
+    @Arg("input", () => CommentInput) input: CommentInput,
     @Ctx() { req }: MyContext
   ): Promise<CommentResponse> {
     /* Look for the comment that matches both id and user ID (ensure privilege to edit) */
@@ -169,13 +133,19 @@ export class CommentResolver {
   /* Delete Comment */
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
-  async deleteMovie(
-    @Arg("commentId") commentId: number,
+  async deleteComment(
+    @Arg("commentId", () => Int) commentId: number,
     @Ctx() { req }: MyContext
   ): Promise<boolean> {
     try {
       /* Deleting comment that matches both id and user id within session (to check privilege) */
-      await UserComment.delete({ id: commentId, userId: req.session.userId });
+      const affected = await (
+        await UserComment.delete({ id: commentId, userId: req.session.userId })
+      ).affected;
+      /* Invalid ID or user trying to delete someone else's comment */
+      if (!affected) {
+        return false;
+      }
     } catch {
       return false;
     }
