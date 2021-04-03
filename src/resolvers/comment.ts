@@ -2,10 +2,12 @@ import { UserComment } from "../entities/Comment";
 import {
   Arg,
   Ctx,
+  FieldResolver,
   Int,
   Mutation,
   Query,
   Resolver,
+  Root,
   UseMiddleware,
 } from "type-graphql";
 import { MyContext } from "../types";
@@ -13,9 +15,22 @@ import { isAuth } from "../middleware/isAuth";
 import { getConnection } from "typeorm";
 import { PaginatedComments, CommentResponse } from "./_objectTypes";
 import { CommentInput } from "./_inputTypes";
+import { User } from "../entities/User";
 
-@Resolver()
+@Resolver(UserComment)
 export class CommentResolver {
+  /* Getting user through data loader */
+  @FieldResolver(() => User)
+  user(@Root() comment: UserComment, @Ctx() { userLoader }: MyContext) {
+    return userLoader.load(comment.userId);
+  }
+
+  /* @Todo: Better way to resolve likes/dislikes */
+  // @FieldResolver(() => Int, { nullable: true })
+  // likes(@Root() comment: UserComment, @Ctx() { ratingLoader }: MyContext) {
+  //   return ratingLoader.load(comment.id);
+  // }
+
   /* Get all comments for specific movie */
   @Query(() => PaginatedComments)
   async comments(
@@ -82,7 +97,6 @@ export class CommentResolver {
 
     return UserComment.findOne({
       where: { id: newPostId },
-      relations: ["user"],
     });
   }
   /* Update Comment */

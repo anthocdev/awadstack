@@ -34,6 +34,10 @@ export class Movie extends BaseEntity {
   year!: number;
 
   @Field()
+  @Column({ nullable: true })
+  description!: string;
+
+  @Field()
   @Column()
   genre!: string;
 

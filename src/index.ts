@@ -15,6 +15,7 @@ import cors from "cors";
 import { createConnection } from "typeorm";
 import { CommentResolver } from "./resolvers/comment";
 import { RatingResolver } from "./resolvers/rating";
+import { createUserLoader } from "./utils/DataLoaders";
 /* Custom session data */
 declare module "express-session" {
   interface Session {
@@ -75,7 +76,12 @@ const main = async () => {
       ],
       validate: false,
     }),
-    context: ({ req, res }): MyContext => ({ req, res, redis }),
+    context: ({ req, res }): MyContext => ({
+      req,
+      res,
+      redis,
+      userLoader: createUserLoader(),
+    }),
   });
 
   apolloServer.applyMiddleware({
