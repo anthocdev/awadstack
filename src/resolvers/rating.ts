@@ -6,7 +6,7 @@ import { getConnection } from "typeorm";
 import { UserComment } from "../entities/Comment";
 import { RatingResponse } from "./_objectTypes";
 
-@Resolver()
+@Resolver(UserRating)
 export class RatingResolver {
   @Mutation(() => RatingResponse)
   @UseMiddleware(isAuth)

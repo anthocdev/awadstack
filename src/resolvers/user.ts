@@ -1,5 +1,5 @@
 import { User } from "../entities/User";
-import { MyContext } from "../types";
+import { MyContext, NoticeType } from "../types";
 import {
   Arg,
   Ctx,
@@ -21,6 +21,12 @@ const multiavatar = require("@multiavatar/multiavatar");
 
 @Resolver(User)
 export class UserResolver {
+  // /* Getting comment/comments through data loader for user*/
+  // @FieldResolver(() => Comment)
+  // comments(@Root() movie: Movie, @Ctx() { userLoader }: MyContext) {
+  //   return userLoader.load(movie.id);
+  // }
+
   @FieldResolver(() => String)
   email(@Root() user: User, @Ctx() { req }: MyContext) {
     //Display user only their own e-mail
@@ -39,7 +45,7 @@ export class UserResolver {
   ): Promise<UserResponse> {
     if (newPassword.length <= 4) {
       return {
-        errors: [
+        fieldErrors: [
           {
             field: "newPassword",
             message: "length must be at least 5 letters/symbols",
@@ -51,7 +57,7 @@ export class UserResolver {
     const userId = await redis.get(FORGOT_PASSWORD_PREFIX + token);
     if (!userId) {
       return {
-        errors: [
+        fieldErrors: [
           {
             field: "token",
             message: "token expired",
@@ -65,7 +71,7 @@ export class UserResolver {
 
     if (!user) {
       return {
-        errors: [
+        fieldErrors: [
           {
             field: "token",
             message: "user no longer exists",
@@ -137,7 +143,7 @@ export class UserResolver {
   ): Promise<UserResponse> {
     const errors = validateRegister(authinfo);
     if (errors) {
-      return { errors };
+      return { fieldErrors: errors };
     }
 
     const hashedPass = await argon2.hash(authinfo.password);
@@ -161,7 +167,7 @@ export class UserResolver {
       /* Duplicate username constraint */
       if (err.code === "23505") {
         return {
-          errors: [
+          fieldErrors: [
             {
               field: "username",
               message: "user already exists",
@@ -192,7 +198,7 @@ export class UserResolver {
     /* User not found */
     if (!user) {
       return {
-        errors: [
+        fieldErrors: [
           {
             field: "usernameOrEmail",
             message: "username does not exist",
@@ -204,10 +210,11 @@ export class UserResolver {
     const validPass = await argon2.verify(user.password, password);
     if (!validPass) {
       return {
-        errors: [
+        alerts: [
           {
-            field: "overall",
-            message: "invalid login info",
+            type: NoticeType.Error,
+            title: "Login Failed",
+            message: "Invalid login info",
           },
         ],
       };
@@ -218,7 +225,16 @@ export class UserResolver {
 
     console.log(req.session);
     /* No errors, returning user object */
-    return { user };
+    return {
+      user,
+      alerts: [
+        {
+          message: "Welcome back " + user.username,
+          title: "Successful Login",
+          type: NoticeType.Success,
+        },
+      ],
+    };
   }
 
   @Mutation(() => Boolean)

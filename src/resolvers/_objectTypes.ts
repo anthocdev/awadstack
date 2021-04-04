@@ -2,6 +2,7 @@ import { UserComment } from "../entities/Comment";
 import { Field, Int, ObjectType } from "type-graphql";
 import { Movie } from "../entities/Movie";
 import { User } from "../entities/User";
+import { NoticeType } from "../types";
 
 /* General */
 @ObjectType()
@@ -12,11 +13,26 @@ export class FieldError {
   message: string;
 }
 
+@ObjectType()
+export class ResAlert {
+  @Field()
+  type: NoticeType;
+  @Field()
+  title: string;
+  @Field()
+  message: string;
+}
+
 /* User Related */
 @ObjectType()
 export class UserResponse {
+  /* Field specific errors */
   @Field(() => [FieldError], { nullable: true })
-  errors?: FieldError[];
+  fieldErrors?: FieldError[];
+
+  /* Alerts for info/error/success/warning */
+  @Field(() => [ResAlert], { nullable: true })
+  alerts?: ResAlert[];
 
   @Field(() => User, { nullable: true })
   user?: User;

@@ -32,6 +32,47 @@ export class CommentResolver {
   // }
 
   /* Get all comments for specific movie */
+  // @Query(() => PaginatedComments)
+  // async comments(
+  //   @Arg("movieId", () => Int) movieId: number,
+  //   @Arg("limit", () => Int) limit: number,
+  //   @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+  // ): Promise<PaginatedComments> {
+  //   const realLimit = Math.min(50, limit);
+  //   const extraLimit = realLimit + 1;
+  //   const qb = getConnection()
+  //     .getRepository(UserComment)
+  //     .createQueryBuilder("comment")
+  //     .where(`comment.movieId = ${movieId}`)
+  //     .loadRelationCountAndMap("comment.likes", "comment.ratings", "rc", (qb) =>
+  //       qb.where("rc.rating = true")
+  //     )
+  //     .loadRelationCountAndMap(
+  //       "comment.dislikes",
+  //       "comment.ratings",
+  //       "rc",
+  //       (qb) => qb.where("rc.rating = false")
+  //     )
+  //     .leftJoinAndSelect("comment.user", "user")
+  //     .orderBy("comment.createdAt", "DESC")
+  //     .take(extraLimit);
+
+  //   if (cursor) {
+  //     qb.where("comment.createdAt < :cursor", {
+  //       cursor: new Date(parseInt(cursor)),
+  //     });
+  //   }
+
+  //   const comments = await qb.getMany();
+
+  //   console.log(comments);
+  //   return {
+  //     comments: comments.slice(0, realLimit),
+  //     hasMore: comments.length === extraLimit,
+  //     id: movieId,
+  //   };
+  // }
+
   @Query(() => PaginatedComments)
   async comments(
     @Arg("movieId", () => Int) movieId: number,

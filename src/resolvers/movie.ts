@@ -11,7 +11,7 @@ import { isAdmin } from "../middleware/isAdmin";
 import { getConnection } from "typeorm";
 import { PaginatedMovies } from "./_objectTypes";
 
-@Resolver()
+@Resolver(Movie)
 export class MovieResolver {
   /* Get all movies */
   @Query(() => PaginatedMovies)

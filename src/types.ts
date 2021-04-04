@@ -8,3 +8,11 @@ export type MyContext = {
   redis: Redis;
   userLoader: ReturnType<typeof createUserLoader>;
 };
+
+export enum NoticeType {
+  /*Alerts*/
+  Info = "info",
+  Warning = "warning",
+  Error = "error",
+  Success = "success",
+}
