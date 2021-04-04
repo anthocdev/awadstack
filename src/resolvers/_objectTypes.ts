@@ -63,8 +63,12 @@ export class PaginatedComments {
 export class CommentResponse {
   @Field(() => UserComment, { nullable: true })
   updatedComment?: UserComment;
-  @Field(() => Boolean, { nullable: true })
-  error?: boolean;
+  /* Field specific errors */
+  @Field(() => [FieldError], { nullable: true })
+  fieldErrors?: FieldError[];
+  /* Alerts for info/error/success/warning */
+  @Field(() => [ResAlert], { nullable: true })
+  alerts?: ResAlert[];
 }
 
 /* Rating Related */
@@ -73,6 +77,10 @@ export class CommentResponse {
 export class RatingResponse {
   @Field(() => UserComment, { nullable: true })
   updatedComment?: UserComment;
-  @Field(() => Boolean, { nullable: true })
-  error?: boolean;
+  /* Field specific errors */
+  @Field(() => [FieldError], { nullable: true })
+  fieldErrors?: FieldError[];
+  /* Alerts for info/error/success/warning */
+  @Field(() => [ResAlert], { nullable: true })
+  alerts?: ResAlert[];
 }

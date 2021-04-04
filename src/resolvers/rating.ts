@@ -1,20 +1,20 @@
 import { Arg, Ctx, Int, Mutation, Resolver, UseMiddleware } from "type-graphql";
-import { MyContext } from "../types";
+import { MyContext, NoticeType } from "../types";
 import { isAuth } from "../middleware/isAuth";
 import { UserRating } from "../entities/UserRating";
 import { getConnection } from "typeorm";
 import { UserComment } from "../entities/Comment";
-import { RatingResponse } from "./_objectTypes";
+import { CommentResponse, RatingResponse } from "./_objectTypes";
 
 @Resolver(UserRating)
 export class RatingResolver {
-  @Mutation(() => RatingResponse)
+  @Mutation(() => CommentResponse)
   @UseMiddleware(isAuth)
   async leaveRating(
     @Arg("isLike") isLike: boolean,
     @Arg("commentId", () => Int) commentId: number,
     @Ctx() { req }: MyContext
-  ): Promise<RatingResponse> {
+  ): Promise<CommentResponse> {
     try {
       const { userId } = req.session;
       /* Check if rating has been left before */
@@ -43,7 +43,13 @@ export class RatingResolver {
       }
     } catch (e) {
       return {
-        error: true,
+        alerts: [
+          {
+            title: "Invalid Comment",
+            message: "Comment you're trying to fetch does not exist.",
+            type: NoticeType.Error,
+          },
+        ],
       };
     }
 

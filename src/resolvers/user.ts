@@ -179,7 +179,16 @@ export class UserResolver {
 
     req.session.userId = user.id;
     req.session.accessLevel = user.accessLevel;
-    return { user };
+    return {
+      user,
+      alerts: [
+        {
+          message: "Welcome " + user.username,
+          title: "Successful Signed-Up",
+          type: NoticeType.Success,
+        },
+      ],
+    };
   }
 
   /* Account Authentication */

@@ -10,7 +10,7 @@ import {
   Root,
   UseMiddleware,
 } from "type-graphql";
-import { MyContext } from "../types";
+import { MyContext, NoticeType } from "../types";
 import { isAuth } from "../middleware/isAuth";
 import { getConnection } from "typeorm";
 import { PaginatedComments, CommentResponse } from "./_objectTypes";
@@ -148,6 +148,18 @@ export class CommentResolver {
     @Arg("input", () => CommentInput) input: CommentInput,
     @Ctx() { req }: MyContext
   ): Promise<CommentResponse> {
+    /* Check for invalid body */
+    if (input.body.length < 15) {
+      return {
+        alerts: [
+          {
+            title: "Too Short",
+            message: "Comment must be longer than 15 letters.",
+            type: NoticeType.Error,
+          },
+        ],
+      };
+    }
     /* Look for the comment that matches both id and user ID (ensure privilege to edit) */
     const comment = await UserComment.findOne({
       id: commentId,
@@ -155,7 +167,15 @@ export class CommentResolver {
     });
 
     if (!comment) {
-      return { error: true };
+      return {
+        alerts: [
+          {
+            title: "Invalid Comment",
+            message: "Comment you're trying to fetch does not exist.",
+            type: NoticeType.Error,
+          },
+        ],
+      };
     }
 
     if (typeof input !== "undefined") {
@@ -164,6 +184,16 @@ export class CommentResolver {
         { id: commentId, userId: req.session.userId },
         { body: input.body }
       );
+    } else {
+      return {
+        alerts: [
+          {
+            title: "Invalid content",
+            type: NoticeType.Error,
+            message: "Can't have an empty comment",
+          },
+        ],
+      };
     }
 
     /* Returning updated comment with likes/dislikes */
