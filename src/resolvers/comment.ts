@@ -25,54 +25,6 @@ export class CommentResolver {
     return userLoader.load(comment.userId);
   }
 
-  /* @Todo: Better way to resolve likes/dislikes */
-  // @FieldResolver(() => Int, { nullable: true })
-  // likes(@Root() comment: UserComment, @Ctx() { ratingLoader }: MyContext) {
-  //   return ratingLoader.load(comment.id);
-  // }
-
-  /* Get all comments for specific movie */
-  // @Query(() => PaginatedComments)
-  // async comments(
-  //   @Arg("movieId", () => Int) movieId: number,
-  //   @Arg("limit", () => Int) limit: number,
-  //   @Arg("cursor", () => String, { nullable: true }) cursor: string | null
-  // ): Promise<PaginatedComments> {
-  //   const realLimit = Math.min(50, limit);
-  //   const extraLimit = realLimit + 1;
-  //   const qb = getConnection()
-  //     .getRepository(UserComment)
-  //     .createQueryBuilder("comment")
-  //     .where(`comment.movieId = ${movieId}`)
-  //     .loadRelationCountAndMap("comment.likes", "comment.ratings", "rc", (qb) =>
-  //       qb.where("rc.rating = true")
-  //     )
-  //     .loadRelationCountAndMap(
-  //       "comment.dislikes",
-  //       "comment.ratings",
-  //       "rc",
-  //       (qb) => qb.where("rc.rating = false")
-  //     )
-  //     .leftJoinAndSelect("comment.user", "user")
-  //     .orderBy("comment.createdAt", "DESC")
-  //     .take(extraLimit);
-
-  //   if (cursor) {
-  //     qb.where("comment.createdAt < :cursor", {
-  //       cursor: new Date(parseInt(cursor)),
-  //     });
-  //   }
-
-  //   const comments = await qb.getMany();
-
-  //   console.log(comments);
-  //   return {
-  //     comments: comments.slice(0, realLimit),
-  //     hasMore: comments.length === extraLimit,
-  //     id: movieId,
-  //   };
-  // }
-
   @Query(() => PaginatedComments)
   async comments(
     @Arg("movieId", () => Int) movieId: number,
@@ -149,12 +101,12 @@ export class CommentResolver {
     @Ctx() { req }: MyContext
   ): Promise<CommentResponse> {
     /* Check for invalid body */
-    if (input.body.length < 15) {
+    if (input.body.length < 5) {
       return {
         alerts: [
           {
             title: "Too Short",
-            message: "Comment must be longer than 15 letters.",
+            message: "Comment must contain at least 5 letters.",
             type: NoticeType.Error,
           },
         ],

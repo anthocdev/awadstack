@@ -59,6 +59,8 @@ export class UserComment extends BaseEntity {
 
   /* Ratings applied to the comment */
   // @Field(() => [UserRating], { nullable: true }) Not directly exposing right now.
-  @OneToMany(() => UserRating, (rating) => rating.comment)
+  @OneToMany(() => UserRating, (rating) => rating.comment, {
+    onDelete: "CASCADE",
+  })
   ratings: UserRating[];
 }

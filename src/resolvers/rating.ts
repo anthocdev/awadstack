@@ -4,7 +4,7 @@ import { isAuth } from "../middleware/isAuth";
 import { UserRating } from "../entities/UserRating";
 import { getConnection } from "typeorm";
 import { UserComment } from "../entities/Comment";
-import { CommentResponse, RatingResponse } from "./_objectTypes";
+import { CommentResponse } from "./_objectTypes";
 
 @Resolver(UserRating)
 export class RatingResolver {

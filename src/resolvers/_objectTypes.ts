@@ -70,17 +70,3 @@ export class CommentResponse {
   @Field(() => [ResAlert], { nullable: true })
   alerts?: ResAlert[];
 }
-
-/* Rating Related */
-
-@ObjectType()
-export class RatingResponse {
-  @Field(() => UserComment, { nullable: true })
-  updatedComment?: UserComment;
-  /* Field specific errors */
-  @Field(() => [FieldError], { nullable: true })
-  fieldErrors?: FieldError[];
-  /* Alerts for info/error/success/warning */
-  @Field(() => [ResAlert], { nullable: true })
-  alerts?: ResAlert[];
-}

@@ -37,7 +37,9 @@ export class UserRating extends BaseEntity {
   voter: User;
 
   @Field(() => UserComment)
-  @ManyToOne(() => UserComment, (comment) => comment.ratings)
+  @ManyToOne(() => UserComment, (comment) => comment.ratings, {
+    onDelete: "CASCADE",
+  })
   comment: UserComment;
 
   @Field(() => String)
